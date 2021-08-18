@@ -345,7 +345,7 @@ fragment part of ENTRY.path."
   "Refresh DevDocs buffer."
   (devdocs--render (pop devdocs--stack)))
 
-(defun devdocs--browse-url (url &rest args)
+(defun devdocs--browse-url (url &rest _args)
   "A suitable `browse-url-browser-function' for `devdocs-mode'.
 URL can be an internal link in a DevDocs document."
   (if (string-match-p ":" url)
@@ -401,7 +401,7 @@ URL can be an internal link in a DevDocs document."
   "Read the name of an entry in a document, using PROMPT.
 All entries of `devdocs-current-docs' are listed.
 
-INITIAL-INPUT is passed to `completing-read'"
+INITIAL-INPUT is passed to `completing-read'."
   (let* ((cands (mapcan #'devdocs--entries devdocs-current-docs))
          (metadata '(metadata
                      (category . devdocs)
