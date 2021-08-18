@@ -162,7 +162,7 @@ REFRESH, if non-nil, downloads the DevDocs document list anew."
   "Delete DevDocs documentation.
 DOC is a document slug."
   (interactive (list (devdocs--read-document "Delete documentation: "
-                                            #'devdocs--installed-p)))
+                                             #'devdocs--installed-p)))
   (let ((dest (file-name-as-directory
                (expand-file-name doc devdocs-data-dir))))
     (if (and (file-directory-p dest)
@@ -227,10 +227,10 @@ This is an alist containing `entries' and `types'."
 (define-derived-mode devdocs-mode special-mode "DevDocs"
   "Major mode for viewing DevDocs documents."
   (setq-local
-   browse-url-browser-function 'devdocs--browse-url
+   browse-url-browser-function #'devdocs--browse-url
    buffer-undo-list t
    header-line-format devdocs-header-line
-   revert-buffer-function 'devdocs--revert-buffer
+   revert-buffer-function #'devdocs--revert-buffer
    truncate-lines t))
 
 (defun devdocs-goto-target ()
@@ -274,14 +274,14 @@ with the order of appearance in the text."
   (devdocs-next-entry (- count)))
 
 (let ((map devdocs-mode-map))
-  (define-key map [tab] 'forward-button)
-  (define-key map [backtab] 'backward-button)
-  (define-key map "i" 'devdocs-lookup)
-  (define-key map "p" 'devdocs-previous-entry)
-  (define-key map "n" 'devdocs-next-entry)
-  (define-key map "l" 'devdocs-go-back)
-  (define-key map "r" 'devdocs-go-forward)
-  (define-key map "." 'devdocs-goto-target))
+  (define-key map [tab] #'forward-button)
+  (define-key map [backtab] #'backward-button)
+  (define-key map "i" #'devdocs-lookup)
+  (define-key map "p" #'devdocs-previous-entry)
+  (define-key map "n" #'devdocs-next-entry)
+  (define-key map "l" #'devdocs-go-back)
+  (define-key map "r" #'devdocs-go-forward)
+  (define-key map "." #'devdocs-goto-target))
 
 ;;; Rendering
 
@@ -385,7 +385,7 @@ URL can be an internal link in a DevDocs document."
   "Return an annotation for `devdocs--read-entry' candidate CAND."
   (let-alist (devdocs--get-data cand)
     (concat " " (propertize " " 'display '(space :align-to 40))
-     (devdocs--doc-title .doc) devdocs-separator .type)))
+            (devdocs--doc-title .doc) devdocs-separator .type)))
 
 (defun devdocs--eat-cookie (&rest _)
   "Eat the disambiguation cookie in the minibuffer."
@@ -413,9 +413,9 @@ INITIAL-INPUT is passed to `completing-read'."
          (cand (minibuffer-with-setup-hook
                    (lambda ()
                      (add-hook 'after-change-functions 'devdocs--eat-cookie nil t))
-                   (completing-read prompt coll nil t initial-input
-                                    'devdocs-history
-                                    (thing-at-point 'symbol)))))
+                 (completing-read prompt coll nil t initial-input
+                                  'devdocs-history
+                                  (thing-at-point 'symbol)))))
     (devdocs--get-data (car (member cand cands)))))
 
 ;;;###autoload
@@ -431,8 +431,8 @@ If INITIAL-INPUT is not nil, insert it into the minibuffer."
   (interactive "P")
   (when (or ask-docs (not devdocs-current-docs))
     (setq-local devdocs-current-docs (devdocs--read-document
-                                     "Docs for this buffer: "
-                                     #'devdocs--installed-p t)))
+                                      "Docs for this buffer: "
+                                      #'devdocs--installed-p t)))
   (let* ((entry (devdocs--read-entry "Go to documentation: " initial-input))
          (buffer (devdocs--render entry)))
     (with-selected-window (display-buffer buffer)
