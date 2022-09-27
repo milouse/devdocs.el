@@ -89,6 +89,10 @@ name and a count."
 Fontification is done using the `org-src' library, which see."
   :type 'boolean)
 
+(defcustom devdocs-hide-method-source-code t
+  "Wether methods source code should be hidden."
+  :type 'boolean)
+
 (defcustom devdocs-window-select nil
   "Whether to select the DevDocs window for viewing."
   :type 'boolean)
@@ -427,6 +431,14 @@ Interactively, read a page name with completion."
         (url-expander-remove-relative-links ;; undocumented function!
          (concat (file-name-directory base) path))))))
 
+(defun devdocs--shr-tag-div (dom)
+  "Insert div-tag represented by DOM.
+This function is there to hide some part of the document, if needed."
+  (let ((class (dom-attr dom 'class)))
+    (unless (and devdocs-hide-method-source-code
+                 (equal class "method-source-code"))
+      (shr-tag-div dom))))
+
 (defun devdocs--shr-tag-pre (dom)
   "Insert and fontify pre-tag represented by DOM."
   (let ((start (point)))
@@ -459,6 +471,7 @@ fragment part of ENTRY.path."
     (let-alist entry
       (let ((inhibit-read-only t)
             (shr-external-rendering-functions `((pre . devdocs--shr-tag-pre)
+                                                (div . devdocs--shr-tag-div)
                                                 ,@shr-external-rendering-functions))
             (file (expand-file-name (format "%s/%s.html"
                                             .doc.slug
